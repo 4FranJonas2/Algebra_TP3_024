@@ -39,16 +39,10 @@ public class Plane
         vertices = new Vector3[] { vect1, vect2, vect3 }; // Almacena los vértices
     }
 
-    // Verifica si un punto está en el plano
-    public bool LiesOnPlane(Vector3 pointToCheck)
-    {
-        return Vector3.Dot(normal, pointToCheck - point) == 0;
-    }
-
     // Verifica si un punto está "en el lado positivo" del plano
-    public bool IsPositiveToThePlane(Vector3 pointToCheck)
+    public bool IsNegativeToThePlane(Vector3 pointToCheck)
     {
-        return Vector3.Dot(normal, pointToCheck - point) > 0;
+        return Vector3.Dot(normal, pointToCheck - point) <= 0;
     }
 
     // Dibuja el plano como Gizmo en el editor de Unity

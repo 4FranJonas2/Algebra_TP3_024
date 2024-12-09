@@ -27,7 +27,6 @@ public class aabb : MonoBehaviour
 
     private void Update()
     {
-
         UpdateBounds();
     }
 
@@ -71,16 +70,6 @@ public class aabb : MonoBehaviour
             return true;
         }
 
-        /*
-        Vector3 distance = other.GetCenter() - GetCenter();
-        Vector3 fucionSizeHalf = other.GetSize() / 2 + GetSize() / 2;
-
-        distance.Abs();
-
-        distance -= fucionSizeHalf;
-
-        return (distance.x < Vector3.zero.x && distance.y < Vector3.zero.y && distance.z < Vector3.zero.z);*/
-
         return false;
     }
 
@@ -95,18 +84,9 @@ public class aabb : MonoBehaviour
         return maxV - minV;
     }
 
-
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireCube(GetCenter(), GetSize());
-    }
-}
-
-public static class Vector3Extensions
-{
-    public static Vector3 Abs(this Vector3 v)
-    {
-        return new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
     }
 }

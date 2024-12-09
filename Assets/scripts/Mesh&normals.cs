@@ -57,77 +57,21 @@ public class NormalsAndMesh : MonoBehaviour
         planes.ForEach(plane => plane.DrawGizmo(transform));
     }
 
-    public bool ContainAPoint(Vector3 point)
-    {
-        Ray ray = new Ray(point, Vector3.up * 10000);
-        int counter = 0;
-
-        for (int i = 0; i < planes.Count(); i++)
-        {
-            if (IsPointInPlane(planes[i], ray, out Vector3 t))
-                counter++;
-        }
-
-        return (counter % 2 == 1);
-    }
-
-    bool IsPointInPlane(Plane plane, Ray ray, out Vector3 point)
-    {
-        point = Vector3.zero; // Tiene que se el punto de interseccion
-
-        float denom = Vector3.Dot(plane.Normal, ray.dest);
-
-        if (Mathf.Abs(denom) > Vector3.kEpsilon)
-        {
-            float t = Vector3.Dot((plane.Normal * plane.distance - ray.org), plane.Normal) / denom;
-
-            if (t >= Vector3.kEpsilon)
-            {
-                point = ray.org + ray.dest * t;  //Vector3.Lerp
-                return true;
-            }
-        }
-        return false;
-    }
-
     public bool WorkingContainAPoint(Vector3 point)
     {
-        myBound bounds = CalculateMeshBounds();
+        Vector3 localPoint = transform.InverseTransformPoint(point);
 
-        if (point.x >= bounds.GetMin().x && point.x <= bounds.GetMax().x &&
-        point.y >= bounds.GetMin().y && point.y <= bounds.GetMax().y &&
-        point.z >= bounds.GetMin().z && point.z <= bounds.GetMax().z)
+        //verifica el punto si esta dentro de cada plano
+        foreach (Plane plane in planes)
         {
-            return true;
+            //si el punto esta en negativo (lado negativo) de cualquier plano, este esta afuera
+            if(!plane.IsNegativeToThePlane(localPoint))
+            {
+                return false;
+            }
         }
 
-        return false;
+        //Si esta dentro de todos entonces lo contiene
+        return true;
     }
-
-    public myBound CalculateMeshBounds()
-    {
-
-        Vector3[] vertices = meshFilter.mesh.vertices;
-
-        Transform meshTransform = meshFilter.transform;
- 
-        Vector3 firstVertex = meshTransform.TransformPoint(vertices[0]);
-        Vector3 min = firstVertex;
-        Vector3 max = firstVertex;
-
-        for (int i = 1; i < vertices.Length; i++)
-        {
-            Vector3 worldVertex = meshTransform.TransformPoint(vertices[i]);
-
- 
-            min = Vector3.Min(min, worldVertex);
-            max = Vector3.Max(max, worldVertex);
-        }
-
-        myBound bounds = new myBound();
-        bounds.SetMinMax(min, max);
-
-        return bounds;
-    }
-
 }
